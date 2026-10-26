@@ -1,0 +1,13 @@
+{
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.pythonProjects": [
+        {
+            "path": "The ultimate introduction to Pygame",
+            "packageManager": "ms-python.python:pip"
+        },
+        {
+            "path": ".",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
+}
