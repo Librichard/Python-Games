@@ -69,14 +69,6 @@ def display_active_screen(screen, sky_surf, ground_surf, obstacle_rect_list, pla
     return score_surf,score_rect
 
 def move_player(space_down, gravity, player_rect, player_clicked, player_jump_start, player_speed):
-    if space_down or player_clicked or player_rect.bottom < 300:
-        player_speed += gravity 
-        player_rect.bottom += player_speed
-        player_clicked = False
-        space_down = False
-    else:
-        player_speed = player_jump_start
-        player_rect.bottom = 300
 
     return player_speed, player_rect
 
@@ -111,7 +103,14 @@ while game_active:
     else:
         move_obstacles(obstacle_rect_list)
 
-        player_speed, player_rect = move_player(space_down, gravity, player_rect, player_clicked, player_jump_start, player_speed)
+        if space_down or player_clicked or player_rect.bottom < 300:
+            player_speed += gravity 
+            player_rect.bottom += player_speed
+            player_clicked = False
+            space_down = False
+        else:
+            player_speed = player_jump_start
+            player_rect.bottom = 300
 
         score_surf, score_rect = display_active_screen(screen, sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf)    
         
