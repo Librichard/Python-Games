@@ -46,13 +46,13 @@ def is_crash(player_rect, obstacle_rect_list):
 
     return False
 
-def display_crash_screen(screen, score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect):
+def display_crash_screen(score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect):
     screen.fill((96, 128, 160))
     screen.blit(score_surf, score_rect)
     screen.blit(player_stand_surf, player_stand_rect)
     screen.blit(text_surf, text_rect)
 
-def display_active_screen(screen, sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf):
+def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf):
     screen.blit(sky_surf, (0, 0))
     screen.blit(ground_surf, (0, 300))
     screen.blit(player_surf, player_rect)
@@ -66,12 +66,11 @@ def display_active_screen(screen, sky_surf, ground_surf, obstacle_rect_list, pla
     score_rect = score_surf.get_rect(midbottom = (400, 50))
     screen.blit(score_surf, score_rect)
 
-    return score_surf,score_rect
+    return score_surf, score_rect
 
-def move_player(space_down, gravity, player_rect, player_clicked, player_jump_start, player_speed):
-
-    return player_speed, player_rect
-
+#################
+#   GAME LOOP   #
+#################
 while game_active:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -99,7 +98,7 @@ while game_active:
                 else:               obstacle_rect_list.append(snail_surf.get_rect(bottomleft = (randint(800, 1000), 100)))
 
     if is_crash(player_rect, obstacle_rect_list):
-        display_crash_screen(screen, score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect)
+        display_crash_screen(score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect)
     else:
         move_obstacles(obstacle_rect_list)
 
@@ -112,7 +111,7 @@ while game_active:
             player_speed = player_jump_start
             player_rect.bottom = 300
 
-        score_surf, score_rect = display_active_screen(screen, sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf)    
+        score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf)    
         
     pygame.display.update()    
     clock.tick(60)
