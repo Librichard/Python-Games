@@ -22,7 +22,12 @@ text_surf       = text_font.render("Crash Boom Bang! Restart? (y/n)", False, "Bl
 text_rect       = text_surf.get_rect(center = screen.get_rect().center)
 text_rect.top   = 350
 
-player_surf         = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+player_walk1_surf   = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+player_walk2_surf   = pygame.image.load("graphics/player/player_walk_2.png").convert_alpha()
+player_jump_surf    = pygame.image.load("graphics/player/jump.png").convert_alpha()
+player_walk         = [player_walk1_surf, player_walk2_surf]
+player_index        = 0
+player_surf         = player_walk[player_index]
 player_rect         = player_surf.get_rect(bottomleft = (50, 300))
 player_clicked      = False
 player_jump_start   = -20
@@ -68,6 +73,15 @@ def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf
 
     return score_surf, score_rect
 
+def player_animation():
+    global player_index, player_surf
+
+    if player_rect.bottom < 300: player_surf = player_jump_surf
+    else:
+        player_index += 0.1
+        if player_index >= len(player_walk): player_index = 0
+        player_surf = player_walk[int(player_index)]
+
 #################
 #   GAME LOOP   #
 #################
@@ -111,6 +125,7 @@ while game_active:
             player_speed = player_jump_start
             player_rect.bottom = 300
 
+        player_animation()
         score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf)    
         
     pygame.display.update()    
