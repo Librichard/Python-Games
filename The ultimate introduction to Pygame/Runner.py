@@ -2,6 +2,10 @@ import pygame
 from sys import exit
 from random import randint
 
+#################
+#   INITIALIZE  #
+#################
+
 pygame.init()
 pygame.display.set_caption("Runner")
 pygame.time.set_timer(pygame.USEREVENT, 1000)
@@ -39,6 +43,10 @@ player_stand_rect   = player_stand_surf.get_rect(center = (400, 200))
 
 snail_surf  = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
 fly_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
+
+#################
+#   FUNCTIONS   #
+#################
 
 def move_obstacles(obstacle_rect_list):
     for obstacle_rect in obstacle_rect_list:
@@ -85,6 +93,7 @@ def player_animation():
 #################
 #   GAME LOOP   #
 #################
+
 while game_active:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
