@@ -9,6 +9,13 @@ from random import randint
 pygame.init()
 pygame.display.set_caption("Runner")
 pygame.time.set_timer(pygame.USEREVENT, 1000)
+
+snail_animation_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(snail_animation_timer, 500)
+
+fly_animation_timer = pygame.USEREVENT + 2
+pygame.time.set_timer(fly_animation_timer, 200)
+
 screen              = pygame.display.set_mode((800, 450))
 clock               = pygame.time.Clock()
 sky_surf            = pygame.image.load("graphics/Sky.png").convert_alpha()
@@ -41,7 +48,13 @@ player_stand_surf   = pygame.image.load("graphics/player/player_stand.png").conv
 player_stand_surf   = pygame.transform.rotozoom(player_stand_surf, 0, 2)
 player_stand_rect   = player_stand_surf.get_rect(center = (400, 200))
 
-snail_surf  = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
+snail_glide1_surf   = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
+snail_glide2_surf   = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
+snail_glide         = [snail_glide1_surf, snail_glide2_surf]
+snail_index         = 0
+snail_surf          = snail_glide[snail_index]
+snail_rect          = snail_surf.get_rect(bottomleft = (randint(800, 1100), 300))
+
 fly_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
 
 #################
@@ -119,6 +132,11 @@ while game_active:
             if event.type == pygame.USEREVENT: 
                 if randint(0, 1):   obstacle_rect_list.append(fly_surf.get_rect(bottomleft = (randint(800, 1000), 300)))
                 else:               obstacle_rect_list.append(snail_surf.get_rect(bottomleft = (randint(800, 1000), 100)))
+
+            if event.type == snail_animation_timer:
+                snail_index += 1
+                if snail_index >= len(snail_glide): snail_index = 0
+                snail_surf = snail_glide[snail_index]
 
     if is_crash(player_rect, obstacle_rect_list):
         display_crash_screen(score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect)
