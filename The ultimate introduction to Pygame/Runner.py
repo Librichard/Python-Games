@@ -53,7 +53,6 @@ snail_glide2_surf   = pygame.image.load("graphics/snail/snail2.png").convert_alp
 snail_glide         = [snail_glide1_surf, snail_glide2_surf]
 snail_index         = 0
 snail_surf          = snail_glide[snail_index]
-snail_rect          = snail_surf.get_rect(bottomleft = (randint(800, 1100), 300))
 
 fly_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
 
