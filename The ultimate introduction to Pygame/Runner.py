@@ -54,7 +54,11 @@ snail_glide         = [snail_glide1_surf, snail_glide2_surf]
 snail_index         = 0
 snail_surf          = snail_glide[snail_index]
 
-fly_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
+fly_fly1_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
+fly_fly2_surf    = pygame.image.load("graphics/fly/fly2.png").convert_alpha()
+fly_fly          = [fly_fly1_surf, fly_fly2_surf]
+fly_index         = 0
+fly_surf          = fly_fly[fly_index]
 
 #################
 #   FUNCTIONS   #
@@ -62,7 +66,7 @@ fly_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
 
 def move_obstacles(obstacle_rect_list):
     for obstacle_rect in obstacle_rect_list:
-        obstacle_rect.right -= 5
+        obstacle_rect.right -= 6
         if obstacle_rect.right < 0: obstacle_rect_list.remove(obstacle_rect)
 
 def is_crash(player_rect, obstacle_rect_list):
@@ -136,6 +140,11 @@ while game_active:
                 snail_index += 1
                 if snail_index >= len(snail_glide): snail_index = 0
                 snail_surf = snail_glide[snail_index]
+
+            if event.type == fly_animation_timer:
+                fly_index += 1
+                if fly_index >= len(fly_fly): fly_index = 0
+                fly_surf = fly_fly[fly_index]
 
     if is_crash(player_rect, obstacle_rect_list):
         display_crash_screen(score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect)
