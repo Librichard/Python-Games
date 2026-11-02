@@ -165,3 +165,6 @@ while game_active:
         
     pygame.display.update()    
     clock.tick(60)
+
+#   here is out of the game loop, so we can quit the game
+pygame.quit()
