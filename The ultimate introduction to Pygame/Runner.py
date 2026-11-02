@@ -8,7 +8,9 @@ from random import randint
 
 pygame.init()
 pygame.display.set_caption("Runner")
-pygame.time.set_timer(pygame.USEREVENT, 1000)
+
+obstacle_timer = pygame.USEREVENT
+pygame.time.set_timer(obstacle_timer, 1000)
 
 snail_animation_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(snail_animation_timer, 500)
@@ -132,7 +134,7 @@ while game_active:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if player_rect.collidepoint(event.pos): player_clicked = True
 
-            if event.type == pygame.USEREVENT: 
+            if event.type == obstacle_timer: 
                 if randint(0, 1):   obstacle_rect_list.append(fly_surf.get_rect(bottomleft = (randint(800, 1000), 300)))
                 else:               obstacle_rect_list.append(snail_surf.get_rect(bottomleft = (randint(800, 1000), 100)))
 
