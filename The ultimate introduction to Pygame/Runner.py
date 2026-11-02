@@ -2,9 +2,9 @@ import pygame
 from sys import exit
 from random import randint
 
-#################
-#   INITIALIZE  #
-#################
+#####################
+#   GLOBAL SETTINGS #
+#####################
 
 pygame.init()
 pygame.display.set_caption("Runner")
