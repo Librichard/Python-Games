@@ -2,6 +2,30 @@ import pygame
 from sys import exit
 from random import randint
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        walk1_image = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+        walk2_image = pygame.image.load("graphics/player/player_walk_2.png").convert_alpha()
+        self.walk_images = [walk1_image, walk2_image]
+        self.jump_image = pygame.image.load("graphics/player/jump.png").convert_alpha()
+        self.animation_index = 0
+        self.image = self.walk_images[0]
+        self.rect = self.image.get_rect(bottomleft = (50, 300))
+        self.clicked = False
+        self.jump_start = -20
+        self.speed = self.jump_start
+        self.stand_image = pygame.image.load("graphics/player/player_stand.png").convert_alpha()
+        self.stand_image = pygame.transform.rotozoom(self.stand_image, 0, 2)
+        self.stand_rect = self.stand_image.get_rect(center = (400, 200))
+
+    def animate(self):
+        if self.rect.bottom < 300: self.image = self.jump_image
+        else:
+            self.animation_index += 0.1
+            if self.animation_index >= len(self.walk_images): self.animation_index = 0
+            self.image = self.walk_images[int(self.animation_index)]
+
 #####################
 #   GLOBAL SETTINGS #
 #####################
@@ -34,30 +58,6 @@ text_font       = pygame.font.Font(None, 50)
 text_surf       = text_font.render("Crash Boom Bang! Restart? (y/n)", False, "Black")
 text_rect       = text_surf.get_rect(center = screen.get_rect().center)
 text_rect.top   = 350
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        walk1_image = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
-        walk2_image = pygame.image.load("graphics/player/player_walk_2.png").convert_alpha()
-        self.walk_images = [walk1_image, walk2_image]
-        self.jump_image = pygame.image.load("graphics/player/jump.png").convert_alpha()
-        self.animation_index = 0
-        self.image = self.walk_images[0]
-        self.rect = self.image.get_rect(bottomleft = (50, 300))
-        self.clicked = False
-        self.jump_start = -20
-        self.speed = self.jump_start
-        self.stand_image = pygame.image.load("graphics/player/player_stand.png").convert_alpha()
-        self.stand_image = pygame.transform.rotozoom(self.stand_image, 0, 2)
-        self.stand_rect = self.stand_image.get_rect(center = (400, 200))
-
-    def animate(self):
-        if self.rect.bottom < 300: self.image = self.jump_image
-        else:
-            self.animation_index += 0.1
-            if self.animation_index >= len(self.walk_images): self.animation_index = 0
-            self.image = self.walk_images[int(self.animation_index)]
 
 player = Player()
 
