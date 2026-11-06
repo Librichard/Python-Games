@@ -35,20 +35,31 @@ text_surf       = text_font.render("Crash Boom Bang! Restart? (y/n)", False, "Bl
 text_rect       = text_surf.get_rect(center = screen.get_rect().center)
 text_rect.top   = 350
 
-player_walk1_surf   = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
-player_walk2_surf   = pygame.image.load("graphics/player/player_walk_2.png").convert_alpha()
-player_jump_surf    = pygame.image.load("graphics/player/jump.png").convert_alpha()
-player_walk         = [player_walk1_surf, player_walk2_surf]
-player_index        = 0
-player_surf         = player_walk[player_index]
-player_rect         = player_surf.get_rect(bottomleft = (50, 300))
-player_clicked      = False
-player_jump_start   = -20
-player_speed        = player_jump_start
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        walk1_image = pygame.image.load("graphics/player/player_walk_1.png").convert_alpha()
+        walk2_image = pygame.image.load("graphics/player/player_walk_2.png").convert_alpha()
+        self.walk_images = [walk1_image, walk2_image]
+        self.jump_image = pygame.image.load("graphics/player/jump.png").convert_alpha()
+        self.animation_index = 0
+        self.image = self.walk_images[0]
+        self.rect = self.image.get_rect(bottomleft = (50, 300))
+        self.clicked = False
+        self.jump_start = -20
+        self.speed = self.jump_start
+        self.stand_image = pygame.image.load("graphics/player/player_stand.png").convert_alpha()
+        self.stand_image = pygame.transform.rotozoom(self.stand_image, 0, 2)
+        self.stand_rect = self.stand_image.get_rect(center = (400, 200))
 
-player_stand_surf   = pygame.image.load("graphics/player/player_stand.png").convert_alpha()
-player_stand_surf   = pygame.transform.rotozoom(player_stand_surf, 0, 2)
-player_stand_rect   = player_stand_surf.get_rect(center = (400, 200))
+    def animate(self):
+        if self.rect.bottom < 300: self.image = self.jump_image
+        else:
+            self.animation_index += 0.1
+            if self.animation_index >= len(self.walk_images): self.animation_index = 0
+            self.image = self.walk_images[int(self.animation_index)]
+
+player = Player()
 
 snail_glide1_surf   = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
 snail_glide2_surf   = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
@@ -99,15 +110,6 @@ def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf
 
     return score_surf, score_rect
 
-def player_animation():
-    global player_index, player_surf
-
-    if player_rect.bottom < 300: player_surf = player_jump_surf
-    else:
-        player_index += 0.1
-        if player_index >= len(player_walk): player_index = 0
-        player_surf = player_walk[int(player_index)]
-
 #################
 #   GAME LOOP   #
 #################
@@ -118,13 +120,13 @@ while game_active:
             pygame.quit()
             exit()
 
-        if is_crash(player_rect, obstacle_rect_list):
+        if is_crash(player.rect, obstacle_rect_list):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_n: game_active = False
 
                 if event.key == pygame.K_y: 
-                    player_rect.bottom  = 300
-                    player_speed        = player_jump_start
+                    player.rect.bottom  = 300
+                    player.speed        = player.jump_start
                     start_time          = pygame.time.get_ticks() // 1000
                     obstacle_rect_list  = []
         else:
@@ -132,7 +134,7 @@ while game_active:
                 if event.key == pygame.K_SPACE: space_down = True
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if player_rect.collidepoint(event.pos): player_clicked = True
+                if player.rect.collidepoint(event.pos): player.clicked = True
 
             if event.type == obstacle_timer: 
                 if randint(0, 1):   obstacle_rect_list.append(fly_surf.get_rect(bottomleft = (randint(800, 1000), 300)))
@@ -148,22 +150,22 @@ while game_active:
                 if fly_index >= len(fly_fly): fly_index = 0
                 fly_surf = fly_fly[fly_index]
 
-    if is_crash(player_rect, obstacle_rect_list):
-        display_crash_screen(score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect)
+    if is_crash(player.rect, obstacle_rect_list):
+        display_crash_screen(score_surf, score_rect, text_surf, text_rect, player.stand_image, player.stand_rect)
     else:
         move_obstacles(obstacle_rect_list)
 
-        if space_down or player_clicked or player_rect.bottom < 300:
-            player_speed += gravity 
-            player_rect.bottom += player_speed
-            player_clicked = False
+        if space_down or player.clicked or player.rect.bottom < 300:
+            player.speed += gravity
+            player.rect.bottom += player.speed
+            player.clicked = False
             space_down = False
         else:
-            player_speed = player_jump_start
-            player_rect.bottom = 300
+            player.speed = player.jump_start
+            player.rect.bottom = 300
 
-        player_animation()
-        score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf)    
+        player.animate()
+        score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player.image, player.rect, snail_surf, fly_surf)
         
     pygame.display.update()    
     clock.tick(60)
