@@ -74,6 +74,36 @@ class Player(pygame.sprite.Sprite):
             if self.animation_index >= len(self.walk_images): self.animation_index = 0
             self.image = self.walk_images[int(self.animation_index)]
 
+class Snail(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        snail1_image = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
+        snail2_image = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
+        self.images = [snail1_image, snail2_image]
+        self.animation_index = 0
+        self.image = self.images[self.animation_index]
+        self.rect = self.image.get_rect()
+
+    def animate(self):
+        self.animation_index += 1
+        if self.animation_index >= len(self.images): self.animation_index = 0
+        self.image = self.images[self.animation_index]
+
+class Fly(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        fly1_image = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
+        fly2_image = pygame.image.load("graphics/fly/fly2.png").convert_alpha()
+        self.images = [fly1_image, fly2_image]
+        self.animation_index = 0
+        self.image = self.images[self.animation_index]
+        self.rect = self.image.get_rect()
+
+    def animate(self):
+        self.animation_index += 1
+        if self.animation_index >= len(self.images): self.animation_index = 0
+        self.image = self.images[self.animation_index]
+
 #####################
 #   GLOBAL SETTINGS #
 #####################
@@ -108,17 +138,8 @@ text_rect.top   = GAME_OVER_TEXT_TOP
 
 player = Player()
 
-snail_glide1_surf   = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
-snail_glide2_surf   = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
-snail_glide         = [snail_glide1_surf, snail_glide2_surf]
-snail_index         = 0
-snail_surf          = snail_glide[snail_index]
-
-fly_fly1_surf    = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
-fly_fly2_surf    = pygame.image.load("graphics/fly/fly2.png").convert_alpha()
-fly_fly          = [fly_fly1_surf, fly_fly2_surf]
-fly_index         = 0
-fly_surf          = fly_fly[fly_index]
+snail = Snail()
+fly = Fly()
 
 #################
 #   FUNCTIONS   #
@@ -184,18 +205,14 @@ while game_active:
                 if player.get_rect().collidepoint(event.pos): player.set_clicked(True)
 
             if event.type == OBSTACLE_TIMER:
-                if randint(0, 1):   obstacle_rect_list.append(fly_surf.get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), GROUND_Y)))
-                else:               obstacle_rect_list.append(snail_surf.get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), ALTERNATE_OBSTACLE_BOTTOM)))
+                if randint(0, 1):   obstacle_rect_list.append(fly.image.get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), GROUND_Y)))
+                else:               obstacle_rect_list.append(snail.image.get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), ALTERNATE_OBSTACLE_BOTTOM)))
 
             if event.type == SNAIL_ANIMATION_TIMER:
-                snail_index += 1
-                if snail_index >= len(snail_glide): snail_index = 0
-                snail_surf = snail_glide[snail_index]
+                snail.animate()
 
             if event.type == FLY_ANIMATION_TIMER:
-                fly_index += 1
-                if fly_index >= len(fly_fly): fly_index = 0
-                fly_surf = fly_fly[fly_index]
+                fly.animate()
 
     if is_crash(player.get_rect(), obstacle_rect_list):
         display_crash_screen(score_surf, score_rect, text_surf, text_rect, player.get_stand_image(), player.get_stand_rect())
@@ -212,7 +229,7 @@ while game_active:
             player.get_rect().bottom = GROUND_Y
 
         player.animate()
-        score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player.get_image(), player.get_rect(), snail_surf, fly_surf)
+        score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player.get_image(), player.get_rect(), snail.image, fly.image)
         
     pygame.display.update()    
     clock.tick(FRAME_RATE)
