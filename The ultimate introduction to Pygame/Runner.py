@@ -137,7 +137,6 @@ text_rect       = text_surf.get_rect(center = screen.get_rect().center)
 text_rect.top   = GAME_OVER_TEXT_TOP
 
 player = Player()
-
 snail = Snail()
 fly = Fly()
 
