@@ -7,8 +7,6 @@ SCREEN_SIZE = (800, 450)
 GROUND_Y = 300
 GRAVITY = 1
 OBSTACLE_TIMER_INTERVAL_MS = 1000
-SNAIL_ANIMATION_INTERVAL_MS = 500
-FLY_ANIMATION_INTERVAL_MS = 200
 OBSTACLE_SPEED = 6
 OBSTACLE_MIN_X = 800
 OBSTACLE_MAX_X = 1000
@@ -71,6 +69,8 @@ class Player(pygame.sprite.Sprite):
             self.image = self.walk_images[int(self.animation_index)]
 
 class Snail(pygame.sprite.Sprite):
+    SNAIL_ANIMATION_INTERVAL_MS = 500
+
     def __init__(self):
         super().__init__()
         snail1_image = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
@@ -89,6 +89,8 @@ class Snail(pygame.sprite.Sprite):
         self.image = self.images[self.animation_index]
 
 class Fly(pygame.sprite.Sprite):
+    FLY_ANIMATION_INTERVAL_MS = 200
+
     def __init__(self):
         super().__init__()
         fly1_image = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
@@ -142,10 +144,10 @@ OBSTACLE_TIMER = pygame.USEREVENT
 pygame.time.set_timer(OBSTACLE_TIMER, OBSTACLE_TIMER_INTERVAL_MS)
 
 SNAIL_ANIMATION_TIMER = pygame.USEREVENT + 1
-pygame.time.set_timer(SNAIL_ANIMATION_TIMER, SNAIL_ANIMATION_INTERVAL_MS)
+pygame.time.set_timer(SNAIL_ANIMATION_TIMER, Snail.SNAIL_ANIMATION_INTERVAL_MS)
 
 FLY_ANIMATION_TIMER = pygame.USEREVENT + 2
-pygame.time.set_timer(FLY_ANIMATION_TIMER, FLY_ANIMATION_INTERVAL_MS)
+pygame.time.set_timer(FLY_ANIMATION_TIMER, Fly.FLY_ANIMATION_INTERVAL_MS)
 
 screen              = pygame.display.set_mode(SCREEN_SIZE)
 clock               = pygame.time.Clock()
