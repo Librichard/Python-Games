@@ -181,15 +181,13 @@ def display_crash_screen(score, player):
     background_color = (96, 128, 160)
     game_over_text = "Crash Boom Bang! Restart? (y/n)"
     game_over_text_top = 350
+    text_surf = pygame.font.Font(None, FONT_SIZE).render(game_over_text, False, TEXT_COLOR)
+    text_rect = text_surf.get_rect(center=screen.get_rect().center)
+    text_rect.top = game_over_text_top
 
     screen.fill(background_color)
     screen.blit(score.get_image(), score.get_rect())
     screen.blit(player.get_stand_image(), player.get_stand_rect())
-    text_surf = pygame.font.Font(None, FONT_SIZE).render(
-        game_over_text, False, TEXT_COLOR
-    )
-    text_rect = text_surf.get_rect(center=screen.get_rect().center)
-    text_rect.top = game_over_text_top
     screen.blit(text_surf, text_rect)
 
 def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf, score):
