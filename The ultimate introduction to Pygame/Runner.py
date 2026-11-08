@@ -18,7 +18,6 @@ GAME_OVER_TEXT = "Crash Boom Bang! Restart? (y/n)"
 GAME_OVER_TEXT_TOP = 350
 FONT_SIZE = 50
 TEXT_COLOR = "Black"
-SCORE_POSITION = (400, 50)
 FRAME_RATE = 60
 
 class Player(pygame.sprite.Sprite):
@@ -84,6 +83,9 @@ class Snail(pygame.sprite.Sprite):
         self.image = self.images[self.animation_index]
         self.rect = self.image.get_rect()
 
+    def get_image(self):
+        return self.image
+
     def animate(self):
         self.animation_index += 1
         if self.animation_index >= len(self.images): self.animation_index = 0
@@ -99,10 +101,38 @@ class Fly(pygame.sprite.Sprite):
         self.image = self.images[self.animation_index]
         self.rect = self.image.get_rect()
 
+    def get_image(self):
+        return self.image
+
     def animate(self):
         self.animation_index += 1
         if self.animation_index >= len(self.images): self.animation_index = 0
         self.image = self.images[self.animation_index]
+
+class Score(pygame.sprite.Sprite):
+    SCORE_POSITION = (400, 50)
+
+    def __init__(self):
+        super().__init__()
+        self.font = pygame.font.Font(None, FONT_SIZE)
+        self.start_time = pygame.time.get_ticks() // 1000
+        self.image = self.font.render("Score: 0", False, TEXT_COLOR)
+        self.rect = self.image.get_rect(midbottom = self.SCORE_POSITION)
+
+    def get_image(self):
+        return self.image
+
+    def get_rect(self):
+        return self.rect
+
+    def update(self):
+        elapsed_time = pygame.time.get_ticks() // 1000 - self.start_time
+        self.image = self.font.render(f"Score: {elapsed_time}", False, TEXT_COLOR)
+        self.rect = self.image.get_rect(midbottom = self.SCORE_POSITION)
+
+    def reset(self):
+        self.start_time = pygame.time.get_ticks() // 1000
+        self.update()
 
 #####################
 #   GLOBAL SETTINGS #
@@ -124,21 +154,18 @@ screen              = pygame.display.set_mode(SCREEN_SIZE)
 clock               = pygame.time.Clock()
 sky_surf            = pygame.image.load("graphics/Sky.png").convert_alpha()
 ground_surf         = pygame.image.load("graphics/ground.png").convert_alpha()
-start_time          = pygame.time.get_ticks() // 1000
 space_down          = False
 game_active         = True
-score_surf          = None
-score_rect          = None
 obstacle_rect_list  = []
 
-text_font       = pygame.font.Font(None, FONT_SIZE)
-text_surf       = text_font.render(GAME_OVER_TEXT, False, TEXT_COLOR)
+text_surf       = pygame.font.Font(None, FONT_SIZE).render(GAME_OVER_TEXT, False, TEXT_COLOR)
 text_rect       = text_surf.get_rect(center = screen.get_rect().center)
 text_rect.top   = GAME_OVER_TEXT_TOP
 
 player = Player()
 snail = Snail()
 fly = Fly()
+score = Score()
 
 #################
 #   FUNCTIONS   #
@@ -155,27 +182,23 @@ def is_crash(player_rect, obstacle_rect_list):
 
     return False
 
-def display_crash_screen(score_surf, score_rect, text_surf, text_rect, player_stand_surf, player_stand_rect):
+def display_crash_screen(score, text_surf, text_rect, player_stand_surf, player_stand_rect):
     screen.fill(GAME_OVER_BACKGROUND)
-    screen.blit(score_surf, score_rect)
+    screen.blit(score.get_image(), score.get_rect())
     screen.blit(player_stand_surf, player_stand_rect)
     screen.blit(text_surf, text_rect)
 
-def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf):
+def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf, score):
     screen.blit(sky_surf, (0, 0))
     screen.blit(ground_surf, (0, GROUND_Y))
     screen.blit(player_surf, player_rect)
 
     for obstacle_rect in obstacle_rect_list: 
-        if obstacle_rect.bottom == GROUND_Y: screen.blit(snail_surf, obstacle_rect)
-        else:                           screen.blit(fly_surf, obstacle_rect)
+        if obstacle_rect.bottom == GROUND_Y:screen.blit(snail_surf, obstacle_rect)
+        else:                               screen.blit(fly_surf, obstacle_rect)
         
-    score = pygame.time.get_ticks() // 1000 - start_time
-    score_surf = text_font.render(f"Score: {score}", False, TEXT_COLOR)
-    score_rect = score_surf.get_rect(midbottom = SCORE_POSITION)
-    screen.blit(score_surf, score_rect)
-
-    return score_surf, score_rect
+    score.update()
+    screen.blit(score.get_image(), score.get_rect())
 
 #################
 #   GAME LOOP   #
@@ -194,7 +217,7 @@ while game_active:
                 if event.key == pygame.K_y: 
                     player.get_rect().bottom = GROUND_Y
                     player.reset_speed()
-                    start_time          = pygame.time.get_ticks() // 1000
+                    score.reset()
                     obstacle_rect_list  = []
         else:
             if event.type == pygame.KEYDOWN:
@@ -204,8 +227,8 @@ while game_active:
                 if player.get_rect().collidepoint(event.pos): player.set_clicked(True)
 
             if event.type == OBSTACLE_TIMER:
-                if randint(0, 1):   obstacle_rect_list.append(fly.image.get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), GROUND_Y)))
-                else:               obstacle_rect_list.append(snail.image.get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), ALTERNATE_OBSTACLE_BOTTOM)))
+                if randint(0, 1):   obstacle_rect_list.append(fly.get_image().get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), GROUND_Y)))
+                else:               obstacle_rect_list.append(snail.get_image().get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), ALTERNATE_OBSTACLE_BOTTOM)))
 
             if event.type == SNAIL_ANIMATION_TIMER:
                 snail.animate()
@@ -214,7 +237,7 @@ while game_active:
                 fly.animate()
 
     if is_crash(player.get_rect(), obstacle_rect_list):
-        display_crash_screen(score_surf, score_rect, text_surf, text_rect, player.get_stand_image(), player.get_stand_rect())
+        display_crash_screen(score, text_surf, text_rect, player.get_stand_image(), player.get_stand_rect())
     else:
         move_obstacles(obstacle_rect_list)
 
@@ -228,7 +251,7 @@ while game_active:
             player.get_rect().bottom = GROUND_Y
 
         player.animate()
-        score_surf, score_rect = display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player.get_image(), player.get_rect(), snail.image, fly.image)
+        display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player.get_image(), player.get_rect(), snail.get_image(), fly.get_image(), score)
         
     pygame.display.update()    
     clock.tick(FRAME_RATE)
