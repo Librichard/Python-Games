@@ -13,9 +13,6 @@ OBSTACLE_SPEED = 6
 OBSTACLE_MIN_X = 800
 OBSTACLE_MAX_X = 1000
 ALTERNATE_OBSTACLE_BOTTOM = 100
-GAME_OVER_BACKGROUND = (96, 128, 160)
-GAME_OVER_TEXT = "Crash Boom Bang! Restart? (y/n)"
-GAME_OVER_TEXT_TOP = 350
 FONT_SIZE = 50
 TEXT_COLOR = "Black"
 FRAME_RATE = 60
@@ -158,10 +155,6 @@ space_down          = False
 game_active         = True
 obstacle_rect_list  = []
 
-text_surf       = pygame.font.Font(None, FONT_SIZE).render(GAME_OVER_TEXT, False, TEXT_COLOR)
-text_rect       = text_surf.get_rect(center = screen.get_rect().center)
-text_rect.top   = GAME_OVER_TEXT_TOP
-
 player = Player()
 snail = Snail()
 fly = Fly()
@@ -182,10 +175,19 @@ def is_crash(player_rect, obstacle_rect_list):
 
     return False
 
-def display_crash_screen(score, text_surf, text_rect, player_stand_surf, player_stand_rect):
-    screen.fill(GAME_OVER_BACKGROUND)
+def display_crash_screen(score, player):
+    background_color = (96, 128, 160)
+    game_over_text = "Crash Boom Bang! Restart? (y/n)"
+    game_over_text_top = 350
+
+    screen.fill(background_color)
     screen.blit(score.get_image(), score.get_rect())
-    screen.blit(player_stand_surf, player_stand_rect)
+    screen.blit(player.get_stand_image(), player.get_stand_rect())
+    text_surf = pygame.font.Font(None, FONT_SIZE).render(
+        game_over_text, False, TEXT_COLOR
+    )
+    text_rect = text_surf.get_rect(center=screen.get_rect().center)
+    text_rect.top = game_over_text_top
     screen.blit(text_surf, text_rect)
 
 def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf, score):
@@ -237,7 +239,7 @@ while game_active:
                 fly.animate()
 
     if is_crash(player.get_rect(), obstacle_rect_list):
-        display_crash_screen(score, text_surf, text_rect, player.get_stand_image(), player.get_stand_rect())
+        display_crash_screen(score, player)
     else:
         move_obstacles(obstacle_rect_list)
 
