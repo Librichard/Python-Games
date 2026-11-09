@@ -6,11 +6,6 @@ WINDOW_TITLE = "Runner"
 SCREEN_SIZE = (800, 450)
 GROUND_Y = 300
 GRAVITY = 1
-OBSTACLE_TIMER_INTERVAL_MS = 1000
-OBSTACLE_SPEED = 6
-OBSTACLE_MIN_X = 800
-OBSTACLE_MAX_X = 1000
-ALTERNATE_OBSTACLE_BOTTOM = 100
 FONT_SIZE = 50
 TEXT_COLOR = "Black"
 FRAME_RATE = 60
@@ -69,6 +64,12 @@ class Player(pygame.sprite.Sprite):
             self.image = self.walk_images[int(self.animation_index)]
 
 class Obstacle(pygame.sprite.Sprite):
+    TIMER_INTERVAL_MS = 1000
+    SPEED = 6
+    MIN_X = 800
+    MAX_X = 1000
+    ALTERNATE_BOTTOM = 100
+
     def __init__(self, images):
         super().__init__()
         self.images = images
@@ -133,7 +134,7 @@ pygame.init()
 pygame.display.set_caption(WINDOW_TITLE)
 
 OBSTACLE_TIMER = pygame.USEREVENT
-pygame.time.set_timer(OBSTACLE_TIMER, OBSTACLE_TIMER_INTERVAL_MS)
+pygame.time.set_timer(OBSTACLE_TIMER, Obstacle.TIMER_INTERVAL_MS)
 
 SNAIL_ANIMATION_TIMER = pygame.USEREVENT + 1
 pygame.time.set_timer(SNAIL_ANIMATION_TIMER, Snail.SNAIL_ANIMATION_INTERVAL_MS)
@@ -160,7 +161,7 @@ score = Score()
 
 def move_obstacles(obstacle_rect_list):
     for obstacle_rect in obstacle_rect_list:
-        obstacle_rect.right -= OBSTACLE_SPEED
+        obstacle_rect.right -= Obstacle.SPEED
         if obstacle_rect.right < 0: obstacle_rect_list.remove(obstacle_rect)
 
 def is_crash(player_rect, obstacle_rect_list):
@@ -221,8 +222,8 @@ while game_active:
                 if player.get_rect().collidepoint(event.pos): player.set_clicked(True)
 
             if event.type == OBSTACLE_TIMER:
-                if randint(0, 1):   obstacle_rect_list.append(fly.get_image().get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), GROUND_Y)))
-                else:               obstacle_rect_list.append(snail.get_image().get_rect(bottomleft = (randint(OBSTACLE_MIN_X, OBSTACLE_MAX_X), ALTERNATE_OBSTACLE_BOTTOM)))
+                if randint(0, 1):   obstacle_rect_list.append(fly.get_image().get_rect(bottomleft = (randint(Obstacle.MIN_X, Obstacle.MAX_X), GROUND_Y)))
+                else:               obstacle_rect_list.append(snail.get_image().get_rect(bottomleft = (randint(Obstacle.MIN_X, Obstacle.MAX_X), Obstacle.ALTERNATE_BOTTOM)))
 
             if event.type == SNAIL_ANIMATION_TIMER:
                 snail.animate()
