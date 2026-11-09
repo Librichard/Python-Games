@@ -2,20 +2,20 @@ import pygame
 from sys import exit
 from random import randint
 
-FRAME_RATE = 60
-FONT_SIZE = 50
-GRAVITY = 1
-GROUND_Y = 300
+FRAME_RATE  = 60
+FONT_SIZE   = 50
+GRAVITY     = 1
+GROUND_Y    = 300
 SCREEN_SIZE = (800, 450)
-TEXT_COLOR = "Black"
-WINDOW_TITLE = "Runner"
+TEXT_COLOR  = "Black"
+WINDOW_TITLE= "Runner"
 
 class Player(pygame.sprite.Sprite):
-    ANIMATION_STEP = 0.1
-    IMAGE_SCALE = 2
-    JUMP_START = -20
-    STAND_POSITION = (400, 200)
-    START_X = 50
+    ANIMATION_STEP  = 0.1
+    IMAGE_SCALE     = 2
+    JUMP_START      = -20
+    STAND_POSITION  = (400, 200)
+    START_X         = 50
 
     def __init__(self):
         super().__init__()
@@ -64,11 +64,11 @@ class Player(pygame.sprite.Sprite):
             self.image = self.walk_images[int(self.animation_index)]
 
 class Obstacle(pygame.sprite.Sprite):
-    ALTERNATE_BOTTOM = 100
-    MAX_X = 1000
-    MIN_X = 800
-    SPEED = 6
-    TIMER_INTERVAL_MS = 1000
+    ALTERNATE_BOTTOM    = 100
+    MAX_X               = 1000
+    MIN_X               = 800
+    SPEED               = 6
+    TIMER_INTERVAL_MS   = 1000
 
     def __init__(self, images):
         super().__init__()
