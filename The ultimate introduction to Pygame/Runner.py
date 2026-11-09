@@ -64,11 +64,11 @@ class Player(pygame.sprite.Sprite):
             self.image = self.walk_images[int(self.animation_index)]
 
 class Obstacle(pygame.sprite.Sprite):
-    TIMER_INTERVAL_MS = 1000
-    SPEED = 6
-    MIN_X = 800
-    MAX_X = 1000
     ALTERNATE_BOTTOM = 100
+    MAX_X = 1000
+    MIN_X = 800
+    SPEED = 6
+    TIMER_INTERVAL_MS = 1000
 
     def __init__(self, images):
         super().__init__()
