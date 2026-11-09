@@ -68,45 +68,37 @@ class Player(pygame.sprite.Sprite):
             if self.animation_index >= len(self.walk_images): self.animation_index = 0
             self.image = self.walk_images[int(self.animation_index)]
 
-class Snail(pygame.sprite.Sprite):
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, images):
+        super().__init__()
+        self.images = images
+        self.animation_index = 0
+        self.image = self.images[self.animation_index]
+        self.rect = self.image.get_rect()
+
+    def get_image(self):
+        return self.image
+
+    def animate(self):
+        self.animation_index += 1
+        if self.animation_index >= len(self.images): self.animation_index = 0
+        self.image = self.images[self.animation_index]
+
+class Snail(Obstacle):
     SNAIL_ANIMATION_INTERVAL_MS = 500
 
     def __init__(self):
-        super().__init__()
         snail1_image = pygame.image.load("graphics/snail/snail1.png").convert_alpha()
         snail2_image = pygame.image.load("graphics/snail/snail2.png").convert_alpha()
-        self.images = [snail1_image, snail2_image]
-        self.animation_index = 0
-        self.image = self.images[self.animation_index]
-        self.rect = self.image.get_rect()
+        super().__init__([snail1_image, snail2_image])
 
-    def get_image(self):
-        return self.image
-
-    def animate(self):
-        self.animation_index += 1
-        if self.animation_index >= len(self.images): self.animation_index = 0
-        self.image = self.images[self.animation_index]
-
-class Fly(pygame.sprite.Sprite):
+class Fly(Obstacle):
     FLY_ANIMATION_INTERVAL_MS = 200
 
     def __init__(self):
-        super().__init__()
         fly1_image = pygame.image.load("graphics/fly/fly1.png").convert_alpha()
         fly2_image = pygame.image.load("graphics/fly/fly2.png").convert_alpha()
-        self.images = [fly1_image, fly2_image]
-        self.animation_index = 0
-        self.image = self.images[self.animation_index]
-        self.rect = self.image.get_rect()
-
-    def get_image(self):
-        return self.image
-
-    def animate(self):
-        self.animation_index += 1
-        if self.animation_index >= len(self.images): self.animation_index = 0
-        self.image = self.images[self.animation_index]
+        super().__init__([fly1_image, fly2_image])
 
 class Score(pygame.sprite.Sprite):
     SCORE_POSITION = (400, 50)
