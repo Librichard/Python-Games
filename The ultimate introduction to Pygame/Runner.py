@@ -2,20 +2,20 @@ import pygame
 from sys import exit
 from random import randint
 
-WINDOW_TITLE = "Runner"
-SCREEN_SIZE = (800, 450)
-GROUND_Y = 300
-GRAVITY = 1
-FONT_SIZE = 50
-TEXT_COLOR = "Black"
 FRAME_RATE = 60
+FONT_SIZE = 50
+GRAVITY = 1
+GROUND_Y = 300
+SCREEN_SIZE = (800, 450)
+TEXT_COLOR = "Black"
+WINDOW_TITLE = "Runner"
 
 class Player(pygame.sprite.Sprite):
-    START_X = 50
-    STAND_POSITION = (400, 200)
-    IMAGE_SCALE = 2
     ANIMATION_STEP = 0.1
+    IMAGE_SCALE = 2
     JUMP_START = -20
+    STAND_POSITION = (400, 200)
+    START_X = 50
 
     def __init__(self):
         super().__init__()
