@@ -146,11 +146,12 @@ screen              = pygame.display.set_mode(SCREEN_SIZE)
 clock               = pygame.time.Clock()
 sky_surf            = pygame.image.load("graphics/Sky.png").convert_alpha()
 ground_surf         = pygame.image.load("graphics/ground.png").convert_alpha()
+player_gs           = pygame.sprite.GroupSingle()
 space_down          = False
 game_active         = True
 obstacle_rect_list  = []
 
-player = Player()
+player_gs.add(Player())
 snail = Snail()
 fly = Fly()
 score = Score()
@@ -170,7 +171,7 @@ def is_crash(player_rect, obstacle_rect_list):
 
     return False
 
-def display_crash_screen(score, player):
+def display_crash_screen(score, player_gs):
     background_color = (96, 128, 160)
     game_over_text = "Crash Boom Bang! Restart? (y/n)"
     game_over_text_top = 350
@@ -180,13 +181,13 @@ def display_crash_screen(score, player):
 
     screen.fill(background_color)
     screen.blit(score.get_image(), score.get_rect())
-    screen.blit(player.get_stand_image(), player.get_stand_rect())
+    screen.blit(player_gs.sprite.get_stand_image(), player_gs.sprite.get_stand_rect())
     screen.blit(text_surf, text_rect)
 
-def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_surf, player_rect, snail_surf, fly_surf, score):
+def display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_gs, snail_surf, fly_surf, score):
     screen.blit(sky_surf, (0, 0))
     screen.blit(ground_surf, (0, GROUND_Y))
-    screen.blit(player_surf, player_rect)
+    player_gs.draw(screen)
 
     for obstacle_rect in obstacle_rect_list: 
         if obstacle_rect.bottom == GROUND_Y:screen.blit(snail_surf, obstacle_rect)
@@ -205,13 +206,13 @@ while game_active:
             pygame.quit()
             exit()
 
-        if is_crash(player.get_rect(), obstacle_rect_list):
+        if is_crash(player_gs.sprite.get_rect(), obstacle_rect_list):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_n: game_active = False
 
                 if event.key == pygame.K_y: 
-                    player.get_rect().bottom = GROUND_Y
-                    player.reset_speed()
+                    player_gs.sprite.get_rect().bottom = GROUND_Y
+                    player_gs.sprite.reset_speed()
                     score.reset()
                     obstacle_rect_list  = []
         else:
@@ -219,7 +220,7 @@ while game_active:
                 if event.key == pygame.K_SPACE: space_down = True
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if player.get_rect().collidepoint(event.pos): player.set_clicked(True)
+                if player_gs.sprite.get_rect().collidepoint(event.pos): player_gs.sprite.set_clicked(True)
 
             if event.type == OBSTACLE_TIMER:
                 if randint(0, 1):   obstacle_rect_list.append(fly.get_image().get_rect(bottomleft = (randint(Obstacle.MIN_X, Obstacle.MAX_X), GROUND_Y)))
@@ -231,22 +232,22 @@ while game_active:
             if event.type == FLY_ANIMATION_TIMER:
                 fly.animate()
 
-    if is_crash(player.get_rect(), obstacle_rect_list):
-        display_crash_screen(score, player)
+    if is_crash(player_gs.sprite.get_rect(), obstacle_rect_list):
+        display_crash_screen(score, player_gs)
     else:
         move_obstacles(obstacle_rect_list)
 
-        if space_down or player.is_clicked() or player.get_rect().bottom < GROUND_Y:
-            player.update_speed()
-            player.get_rect().bottom += player.speed
-            player.set_clicked(False)
+        if space_down or player_gs.sprite.is_clicked() or player_gs.sprite.get_rect().bottom < GROUND_Y:
+            player_gs.sprite.update_speed()
+            player_gs.sprite.get_rect().bottom += player_gs.sprite.speed
+            player_gs.sprite.set_clicked(False)
             space_down = False
         else:
-            player.reset_speed()
-            player.get_rect().bottom = GROUND_Y
+            player_gs.sprite.reset_speed()
+            player_gs.sprite.get_rect().bottom = GROUND_Y
 
-        player.animate()
-        display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player.get_image(), player.get_rect(), snail.get_image(), fly.get_image(), score)
+        player_gs.sprite.animate()
+        display_active_screen(sky_surf, ground_surf, obstacle_rect_list, player_gs, snail.get_image(), fly.get_image(), score)
         
     pygame.display.update()    
     clock.tick(FRAME_RATE)
